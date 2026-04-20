@@ -44,6 +44,7 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
   const [message, setMessage] = useState('준비됨');
   const [inputValue, setInputValue] = useState('');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isTree = algorithm.id === 'binary-tree';
   const isLinkedList = algorithm.id === 'linked-list';
@@ -55,9 +56,17 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current);
+      highlightTimerRef.current = null;
+    }
   }, []);
 
   const resetVisState = useCallback(() => {
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current);
+      highlightTimerRef.current = null;
+    }
     setSteps([]);
     setCurrentStep(0);
     setActiveIndex(-1);
@@ -137,21 +146,30 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
   }, [isLinkedList, linkedList]);
 
   const applyStep = useCallback((step: DSStepData) => {
+    // Clear any pending highlight-clear timer when a new step is applied
+    if (highlightTimerRef.current) {
+      clearTimeout(highlightTimerRef.current);
+      highlightTimerRef.current = null;
+    }
+
     if (isStack || isQueue) {
-      if (step.type === 'push' || step.type === 'enqueue') {
+      if (step.type === 'prepare' || step.type === 'push' || step.type === 'enqueue') {
+        setItems([...step.values]);
         setActiveIndex(step.indices[0] ?? -1);
-      } else if (step.type === 'pop') {
-        setActiveIndex(step.indices[0] ?? -1);
-      } else if (step.type === 'dequeue') {
+      } else if (step.type === 'pop' || step.type === 'dequeue') {
         setActiveIndex(step.indices[0] ?? -1);
       } else if (step.type === 'done') {
-        if (step.values && step.values.length > 0) {
-          setItems([...step.values]);
+        setItems([...step.values]);
+        // Keep highlight visible briefly, then clear
+        if (step.indices.length > 0) {
+          setActiveIndex(step.indices[0]);
         } else {
-          // For pop/dequeue done, values should be the remaining
-          setItems(step.values ? [...step.values] : []);
+          setActiveIndex(-1);
         }
-        setActiveIndex(-1);
+        highlightTimerRef.current = setTimeout(() => {
+          setActiveIndex(-1);
+          highlightTimerRef.current = null;
+        }, 500);
       }
     } else if (isTree) {
       if (step.type === 'highlight') {
@@ -160,16 +178,41 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
         if (step.data) {
           setTree(JSON.parse(JSON.stringify(step.data)));
         }
-        setHighlightedNodes(new Set());
+        // Keep path highlight visible on insert/done
+        if (step.values.length > 0) {
+          setHighlightedNodes(new Set(step.values));
+        }
+        // On done, clear highlight after delay
+        if (step.type === 'done') {
+          highlightTimerRef.current = setTimeout(() => {
+            setHighlightedNodes(new Set());
+            highlightTimerRef.current = null;
+          }, 500);
+        }
       }
     } else if (isLinkedList) {
       if (step.type === 'highlight') {
         setLlHighlighted(new Set(step.values));
-      } else if (step.type === 'insert' || step.type === 'delete' || step.type === 'done') {
+      } else if (step.type === 'insert' || step.type === 'delete') {
         if (step.data) {
           setLinkedList(JSON.parse(JSON.stringify(step.data)));
         }
-        setLlHighlighted(new Set());
+        // Keep highlight on insert/delete
+        if (step.values.length > 0) {
+          setLlHighlighted(new Set(step.values));
+        }
+      } else if (step.type === 'done') {
+        if (step.data) {
+          setLinkedList(JSON.parse(JSON.stringify(step.data)));
+        }
+        // Keep highlight visible briefly, then clear
+        if (step.values.length > 0) {
+          setLlHighlighted(new Set(step.values));
+        }
+        highlightTimerRef.current = setTimeout(() => {
+          setLlHighlighted(new Set());
+          highlightTimerRef.current = null;
+        }, 500);
       }
     }
     setMessage(step.message);

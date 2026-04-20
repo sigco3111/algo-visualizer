@@ -159,18 +159,29 @@ interface LLStep {
 
 export function* stackPushGen(items: number[], value: number): Generator<StackQueueStep> {
   const newItems = [...items, value];
+  const targetIdx = newItems.length - 1;
+  // Step 1: prepare — show the item appearing
   yield {
-    type: 'push',
-    indices: [newItems.length - 1],
+    type: 'prepare',
+    indices: [targetIdx],
     values: newItems,
-    message: msg(['push(', String(value), ')']),
+    message: msg(['preparing push(', String(value), ') at position ', String(targetIdx)]),
     line: 4,
   };
+  // Step 2: push — confirm the push
+  yield {
+    type: 'push',
+    indices: [targetIdx],
+    values: newItems,
+    message: msg(['push(', String(value), ')']),
+    line: 5,
+  };
+  // Step 3: done — keep highlight briefly
   yield {
     type: 'done',
-    indices: [],
+    indices: [targetIdx],
     values: newItems,
-    message: msg(['stack size: ', String(newItems.length)]),
+    message: msg(['pushed: ', String(value), ' | stack size: ', String(newItems.length)]),
     line: 5,
   };
 }
@@ -187,19 +198,30 @@ export function* stackPopGen(items: number[]): Generator<StackQueueStep> {
     return;
   }
   const popped = items[items.length - 1];
+  const topIdx = items.length - 1;
   const newItems = items.slice(0, -1);
+  // Step 1: highlight top element
+  yield {
+    type: 'prepare',
+    indices: [topIdx],
+    values: items,
+    message: msg(['peek top: ', String(popped)]),
+    line: 8,
+  };
+  // Step 2: pop
   yield {
     type: 'pop',
-    indices: [items.length - 1],
+    indices: [topIdx],
     values: items,
     message: msg(['pop() -> ', String(popped)]),
     line: 9,
   };
+  // Step 3: done — keep highlight briefly
   yield {
     type: 'done',
-    indices: [],
+    indices: topIdx < newItems.length ? [topIdx] : (newItems.length > 0 ? [newItems.length - 1] : []),
     values: newItems,
-    message: msg(['stack size: ', String(newItems.length)]),
+    message: msg(['popped: ', String(popped), ' | stack size: ', String(newItems.length)]),
     line: 10,
   };
 }
@@ -210,18 +232,29 @@ export function* stackPopGen(items: number[]): Generator<StackQueueStep> {
 
 export function* queueEnqueueGen(items: number[], value: number): Generator<StackQueueStep> {
   const newItems = [...items, value];
+  const targetIdx = newItems.length - 1;
+  // Step 1: prepare
   yield {
-    type: 'enqueue',
-    indices: [newItems.length - 1],
+    type: 'prepare',
+    indices: [targetIdx],
     values: newItems,
-    message: msg(['enqueue(', String(value), ')']),
+    message: msg(['preparing enqueue(', String(value), ') at rear']),
     line: 4,
   };
+  // Step 2: enqueue
+  yield {
+    type: 'enqueue',
+    indices: [targetIdx],
+    values: newItems,
+    message: msg(['enqueue(', String(value), ')']),
+    line: 5,
+  };
+  // Step 3: done — keep highlight
   yield {
     type: 'done',
-    indices: [],
+    indices: [targetIdx],
     values: newItems,
-    message: msg(['queue size: ', String(newItems.length)]),
+    message: msg(['enqueued: ', String(value), ' | queue size: ', String(newItems.length)]),
     line: 5,
   };
 }
@@ -239,6 +272,15 @@ export function* queueDequeueGen(items: number[]): Generator<StackQueueStep> {
   }
   const dequeued = items[0];
   const newItems = items.slice(1);
+  // Step 1: highlight front
+  yield {
+    type: 'prepare',
+    indices: [0],
+    values: items,
+    message: msg(['peek front: ', String(dequeued)]),
+    line: 8,
+  };
+  // Step 2: dequeue
   yield {
     type: 'dequeue',
     indices: [0],
@@ -246,11 +288,12 @@ export function* queueDequeueGen(items: number[]): Generator<StackQueueStep> {
     message: msg(['dequeue() -> ', String(dequeued)]),
     line: 9,
   };
+  // Step 3: done — keep highlight on new front
   yield {
     type: 'done',
-    indices: [],
+    indices: newItems.length > 0 ? [0] : [],
     values: newItems,
-    message: msg(['queue size: ', String(newItems.length)]),
+    message: msg(['dequeued: ', String(dequeued), ' | queue size: ', String(newItems.length)]),
     line: 10,
   };
 }
@@ -310,16 +353,18 @@ export function* bstInsertGen(root: TreeNode | null, value: number): Generator<T
   }
 
   const newRoot = insertNode(root, value);
+  // Insert step: highlight the new node along with the path
   yield {
     type: 'insert',
-    values: [value],
+    values: [value, ...path],
     message: msg(['inserted: ', String(value)]),
     line: 16,
     tree: newRoot,
   };
+  // Done step: keep highlight briefly
   yield {
     type: 'done',
-    values: [],
+    values: [value, ...path],
     message: 'insert complete',
     line: 16,
     tree: newRoot,
@@ -346,13 +391,13 @@ export function* llInsertGen(head: LLNode | null, value: number): Generator<LLSt
 
   const newNode: LLNode = { value, next: null };
   let newHead: LLNode | null;
+  const path: number[] = [];
 
   if (!head) {
     newHead = newNode;
   } else {
     newHead = deepCloneLL(head);
     let curr: LLNode | null = newHead;
-    const path: number[] = [];
     if (curr) {
       path.push(curr.value);
       while (curr.next) {
@@ -372,14 +417,14 @@ export function* llInsertGen(head: LLNode | null, value: number): Generator<LLSt
 
   yield {
     type: 'insert',
-    values: [value],
+    values: [value, ...path],
     message: msg(['inserted: ', String(value)]),
     line: 18,
     list: newHead,
   };
   yield {
     type: 'done',
-    values: [],
+    values: [value, ...path],
     message: 'insert complete',
     line: 18,
     list: newHead,
@@ -450,7 +495,7 @@ export function* llDeleteGen(head: LLNode | null, value: number): Generator<LLSt
   if (!found) {
     yield {
       type: 'done',
-      values: [],
+      values: [value],
       message: msg([String(value), ' not found']),
       line: 25,
       list: newHead,
@@ -458,7 +503,7 @@ export function* llDeleteGen(head: LLNode | null, value: number): Generator<LLSt
   } else {
     yield {
       type: 'done',
-      values: [],
+      values: [value],
       message: 'delete complete',
       line: 25,
       list: newHead,
