@@ -286,7 +286,7 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
 
   const activeLine = steps.length > 0 && currentStep < steps.length ? steps[currentStep].line : -1;
 
-  // SVG layout for tree
+  // SVG layout for tree — using viewBox for responsive scaling
   const renderTree = () => {
     if (!tree) return null;
     const positions = new Map<string, { x: number; y: number }>();
@@ -369,14 +369,20 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
     draw(tree);
 
     return (
-      <svg width={svgWidth} height={svgHeight} className="tree-svg">
+      <svg
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+        className="tree-svg"
+      >
         {edges}
         {nodes}
       </svg>
     );
   };
 
-  // SVG layout for linked list
+  // SVG layout for linked list — using viewBox for responsive scaling
   const renderLinkedList = () => {
     if (!linkedList) return null;
     const nodes: React.ReactNode[] = [];
@@ -423,8 +429,17 @@ export const DataStructuresVisualizer: React.FC<Props> = ({ algorithm }) => {
       idx++;
     }
 
+    const svgWidth = Math.max(200, 60 + idx * 120);
+    const svgHeight = 120;
+
     return (
-      <svg width={Math.max(200, 60 + idx * 120)} height={120} className="ll-svg">
+      <svg
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMin meet"
+        className="ll-svg"
+      >
         <defs>
           <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
             <polygon points="0 0, 8 3, 0 6" fill="#484f58" />

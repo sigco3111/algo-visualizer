@@ -8,6 +8,12 @@ import './App.css';
 
 const App: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmInfo | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleSelectAlgorithm = (algo: AlgorithmInfo) => {
+    setSelectedAlgorithm(algo);
+    setSidebarOpen(false);
+  };
 
   const renderVisualizer = () => {
     if (!selectedAlgorithm) {
@@ -41,9 +47,27 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
+      {/* Mobile hamburger button */}
+      <button
+        className="mobile-hamburger"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="메뉴"
+      >
+        <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+        <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+        <span className={`hamburger-line ${sidebarOpen ? 'open' : ''}`} />
+      </button>
+
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div className="mobile-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
       <Sidebar
         selectedAlgorithm={selectedAlgorithm}
-        onSelectAlgorithm={setSelectedAlgorithm}
+        onSelectAlgorithm={handleSelectAlgorithm}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       <main className="main-content">
         {renderVisualizer()}

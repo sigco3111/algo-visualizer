@@ -129,6 +129,8 @@
   align-items: flex-start;
   justify-content: center;
   overflow: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .tree-svg {
@@ -143,9 +145,65 @@
   justify-content: flex-start;
   overflow: auto;
   padding: 20px;
+  width: 100%;
+  height: 100%;
 }
 
 .ll-svg {
   max-width: 100%;
   overflow: visible;
+}
+
+/* ============================================================
+   Mobile Responsive — Data Structures Visualizer
+   ============================================================ */
+@media (max-width: 768px) {
+  .ds-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+
+  .ds-input {
+    flex: 1;
+    min-width: 80px;
+    width: auto;
+    font-size: 12px;
+    min-height: 36px;
+  }
+
+  .ds-size {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .ds-canvas {
+    padding: 8px;
+  }
+
+  .ds-box {
+    width: 44px;
+    height: 40px;
+  }
+
+  .queue-layout .ds-box {
+    width: 44px;
+    height: 44px;
+  }
+
+  .ds-box-value {
+    font-size: 12px;
+  }
+
+  .ds-box-label {
+    font-size: 7px;
+  }
+
+  .tree-container {
+    padding: 4px;
+  }
+
+  .ll-container {
+    padding: 8px;
+  }
 }

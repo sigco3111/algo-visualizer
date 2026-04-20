@@ -27,9 +27,11 @@ const categories: CategoryDef[] = [
 interface SidebarProps {
   selectedAlgorithm: AlgorithmInfo | null;
   onSelectAlgorithm: (algo: AlgorithmInfo) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ selectedAlgorithm, onSelectAlgorithm }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ selectedAlgorithm, onSelectAlgorithm, isOpen, onClose }) => {
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({
     sorting: true,
     searching: false,
@@ -48,8 +50,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ selectedAlgorithm, onSelectAlg
     }
   };
 
+  const handleSelect = (algo: AlgorithmInfo) => {
+    onSelectAlgorithm(algo);
+    onClose?.();
+  };
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-header">
         <span className="sidebar-logo">⬡</span>
         <span className="sidebar-title">Algo Visualizer</span>
@@ -71,7 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ selectedAlgorithm, onSelectAlg
                   <button
                     key={algo.id}
                     className={`algorithm-item ${selectedAlgorithm?.id === algo.id ? 'active' : ''}`}
-                    onClick={() => onSelectAlgorithm(algo)}
+                    onClick={() => handleSelect(algo)}
                   >
                     <span className="algo-name">{algo.name}</span>
                     <span className={`algo-difficulty ${difficultyColor(algo.difficulty)}`}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './CodePanel.css';
 
 interface CodePanelProps {
@@ -22,7 +22,7 @@ const highlightSyntax = (line: string): React.ReactNode => {
 
   while (remaining.length > 0) {
     // Match string
-    const strMatch = remaining.match(/^(['"`])(.*?)\1/);
+    const strMatch = remaining.match(/^(['\"`])(.*?)\1/);
     if (strMatch) {
       result.push(<span key={keyIdx++} className="syn-string">{strMatch[0]}</span>);
       remaining = remaining.slice(strMatch[0].length);
@@ -83,10 +83,11 @@ export const CodePanel: React.FC<CodePanelProps> = ({
   description,
   difficulty,
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const difficultyClass = difficulty === 'basic' ? 'diff-basic' : difficulty === 'intermediate' ? 'diff-intermediate' : 'diff-advanced';
 
   return (
-    <div className="code-panel">
+    <div className={`code-panel ${isCollapsed ? 'code-panel-collapsed' : ''}`}>
       <div className="code-panel-header">
         <div className="code-panel-tabs">
           <div className="code-tab active">코드</div>
@@ -105,26 +106,35 @@ export const CodePanel: React.FC<CodePanelProps> = ({
               </span>
             </>
           )}
+          <button
+            className="code-toggle-btn"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label={isCollapsed ? '코드 펼치기' : '코드 접기'}
+          >
+            {isCollapsed ? '▲' : '▼'}
+          </button>
         </div>
       </div>
-      {description && (
+      {!isCollapsed && description && (
         <div className="code-description">{description}</div>
       )}
-      <div className="code-content">
-        <div className="code-lines">
-          {code.map((line, i) => (
-            <div
-              key={i}
-              className={`code-line ${i === activeLine ? 'active' : ''}`}
-            >
-              <span className="line-number">{i + 1}</span>
-              <span className="line-content">
-                {highlightSyntax(line)}
-              </span>
-            </div>
-          ))}
+      {!isCollapsed && (
+        <div className="code-content">
+          <div className="code-lines">
+            {code.map((line, i) => (
+              <div
+                key={i}
+                className={`code-line ${i === activeLine ? 'active' : ''}`}
+              >
+                <span className="line-number">{i + 1}</span>
+                <span className="line-content">
+                  {highlightSyntax(line)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -119,3 +119,42 @@
 .swatch-pivot { background: var(--accent-red); }
 .swatch-sorted { background: var(--accent-green); }
 .swatch-range { background: rgba(88, 166, 255, 0.4); }
+
+/* ============================================================
+   Mobile Responsive — Sorting Visualizer
+   ============================================================ */
+@media (max-width: 768px) {
+  .sorting-input-row {
+    flex-wrap: wrap;
+    padding: 6px 8px;
+  }
+
+  .sorting-custom-input {
+    font-size: 12px;
+    min-width: 0;
+  }
+
+  .bars-container {
+    padding: 8px 4px 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .bar-wrapper {
+    min-width: 4px;
+  }
+
+  .bar-value {
+    font-size: 7px;
+  }
+
+  .sorting-legend {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 8px;
+  }
+
+  .legend-item {
+    font-size: 9px;
+  }
+}

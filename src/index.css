@@ -151,3 +151,14 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--accent-blue-dim);
   color: #fff;
 }
+
+/* ============================================================
+   Mobile Responsive CSS Variables
+   ============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 280px;
+    --topbar-height: auto;
+    --code-panel-height: 200px;
+  }
+}

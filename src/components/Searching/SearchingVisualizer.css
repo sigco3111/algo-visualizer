@@ -141,3 +141,45 @@
   font-family: var(--font-mono);
   color: var(--text-primary);
 }
+
+/* ============================================================
+   Mobile Responsive — Searching Visualizer
+   ============================================================ */
+@media (max-width: 768px) {
+  .grid-tools {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .grid-hint {
+    margin-left: 0;
+    flex-basis: 100%;
+    font-size: 9px;
+  }
+
+  .grid-canvas {
+    width: 100%;
+    height: auto;
+  }
+
+  .bs-info {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+
+  .bs-cell {
+    min-width: 28px;
+    padding: 3px 4px;
+  }
+
+  .bs-value {
+    font-size: 10px;
+  }
+
+  .bs-index {
+    font-size: 7px;
+  }
+}

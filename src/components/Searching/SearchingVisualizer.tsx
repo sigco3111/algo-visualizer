@@ -51,8 +51,34 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
   const [bsFound, setBsFound] = useState(false);
   const [bsVisited, setBsVisited] = useState<Set<number>>(new Set());
 
+  // Responsive canvas sizing
+  const [canvasSize, setCanvasSize] = useState({ width: COLS * 24, height: ROWS * 24 });
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Dynamic canvas sizing based on container width
+  useEffect(() => {
+    if (isBinarySearch) return;
+    const container = gridContainerRef.current;
+    if (!container) return;
+
+    const updateSize = () => {
+      const containerWidth = container.clientWidth;
+      if (containerWidth <= 0) return;
+      const cellSize = Math.max(12, Math.floor(containerWidth / COLS));
+      setCanvasSize({
+        width: cellSize * COLS,
+        height: cellSize * ROWS,
+      });
+    };
+
+    updateSize();
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, [isBinarySearch]);
 
   // Generate random grid
   const generateGrid = useCallback(() => {
@@ -293,16 +319,26 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
     resetVisState();
   }, [stopPlayback, resetVisState]);
 
-  // Grid mouse interaction
-  const handleCanvasMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Helper to get cell from pointer position (works for mouse and touch)
+  const getCellFromPosition = useCallback((clientX: number, clientY: number): [number, number] | null => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
     const col = Math.floor(x / (canvas.width / COLS));
     const row = Math.floor(y / (canvas.height / ROWS));
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return null;
+    return [row, col];
+  }, []);
+
+  // Grid mouse interaction
+  const handleCanvasMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const cell = getCellFromPosition(e.clientX, e.clientY);
+    if (!cell) return;
+    const [row, col] = cell;
 
     if (playbackState !== 'idle') return;
 
@@ -318,18 +354,13 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
         return next;
       });
     }
-  }, [startNode, endNode, playbackState]);
+  }, [startNode, endNode, playbackState, getCellFromPosition]);
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!drawingMode) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const col = Math.floor(x / (canvas.width / COLS));
-    const row = Math.floor(y / (canvas.height / ROWS));
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return;
+    const cell = getCellFromPosition(e.clientX, e.clientY);
+    if (!cell) return;
+    const [row, col] = cell;
 
     if (drawingMode === 'wall') {
       setGrid(prev => {
@@ -347,9 +378,63 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
         setEndNode([row, col]);
       }
     }
-  }, [drawingMode, startNode, endNode, grid]);
+  }, [drawingMode, startNode, endNode, grid, getCellFromPosition]);
 
   const handleCanvasMouseUp = useCallback(() => {
+    setDrawingMode(null);
+  }, []);
+
+  // Touch support for canvas
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const cell = getCellFromPosition(touch.clientX, touch.clientY);
+    if (!cell) return;
+    const [row, col] = cell;
+
+    if (playbackState !== 'idle') return;
+
+    if (row === startNode[0] && col === startNode[1]) {
+      setDrawingMode('start');
+    } else if (row === endNode[0] && col === endNode[1]) {
+      setDrawingMode('end');
+    } else {
+      setDrawingMode('wall');
+      setGrid(prev => {
+        const next = prev.map(r => [...r]);
+        next[row][col] = next[row][col] === 1 ? 0 : 1;
+        return next;
+      });
+    }
+  }, [startNode, endNode, playbackState, getCellFromPosition]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!drawingMode) return;
+    const touch = e.touches[0];
+    const cell = getCellFromPosition(touch.clientX, touch.clientY);
+    if (!cell) return;
+    const [row, col] = cell;
+
+    if (drawingMode === 'wall') {
+      setGrid(prev => {
+        const next = prev.map(r => [...r]);
+        if ((row === startNode[0] && col === startNode[1]) || (row === endNode[0] && col === endNode[1])) return next;
+        next[row][col] = 1;
+        return next;
+      });
+    } else if (drawingMode === 'start') {
+      if (grid[row][col] !== 1 && !(row === endNode[0] && col === endNode[1])) {
+        setStartNode([row, col]);
+      }
+    } else if (drawingMode === 'end') {
+      if (grid[row][col] !== 1 && !(row === startNode[0] && col === startNode[1])) {
+        setEndNode([row, col]);
+      }
+    }
+  }, [drawingMode, startNode, endNode, grid, getCellFromPosition]);
+
+  const handleTouchEnd = useCallback(() => {
     setDrawingMode(null);
   }, []);
 
@@ -391,7 +476,7 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
         ctx.fillRect(x + 0.5, y + 0.5, cellW - 1, cellH - 1);
       }
     }
-  }, [grid, startNode, endNode, visitedCells, frontierCells, pathCells, isBinarySearch]);
+  }, [grid, startNode, endNode, visitedCells, frontierCells, pathCells, isBinarySearch, canvasSize]);
 
   const activeLine = steps.length > 0 && currentStep < steps.length ? steps[currentStep].line : -1;
 
@@ -457,7 +542,7 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
             </div>
           </div>
         ) : (
-          <div className="grid-area">
+          <div className="grid-area" ref={gridContainerRef}>
             <div className="grid-tools">
               <span className="grid-tool-info">
                 <span className="grid-tool-swatch" style={{ background: '#3fb950' }} />시작
@@ -474,17 +559,20 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
               <span className="grid-tool-info">
                 <span className="grid-tool-swatch" style={{ background: '#d29922' }} />경로
               </span>
-              <span className="grid-hint">클릭/드래그로 벽 그리기, 시작/도착점 드래그</span>
+              <span className="grid-hint">클릭/드래그로 벽 그리기</span>
             </div>
             <canvas
               ref={canvasRef}
-              width={COLS * 24}
-              height={ROWS * 24}
+              width={canvasSize.width}
+              height={canvasSize.height}
               className="grid-canvas"
               onMouseDown={handleCanvasMouseDown}
               onMouseMove={handleCanvasMouseMove}
               onMouseUp={handleCanvasMouseUp}
               onMouseLeave={handleCanvasMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             />
           </div>
         )}
@@ -498,4 +586,4 @@ export const SearchingVisualizer: React.FC<Props> = ({ algorithm }) => {
       />
     </div>
   );
-};
+}
