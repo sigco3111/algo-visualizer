@@ -1,0 +1,135 @@
+.code-panel {
+  height: var(--code-panel-height);
+  min-height: var(--code-panel-height);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.code-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 32px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.code-panel-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.code-tab {
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  cursor: default;
+}
+
+.code-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-blue);
+}
+
+.code-panel-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.code-difficulty {
+  font-size: 10px;
+  padding: 1px 6px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.diff-basic {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+
+.diff-intermediate {
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+}
+
+.diff-advanced {
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+}
+
+.code-meta-item {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.code-meta-value {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  margin-left: 4px;
+}
+
+.code-description {
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.code-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.code-lines {
+  padding: 8px 0;
+}
+
+.code-line {
+  display: flex;
+  align-items: stretch;
+  line-height: 1.6;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 0 12px;
+}
+
+.code-line.active {
+  background: rgba(88, 166, 255, 0.08);
+  border-left: 2px solid var(--accent-blue);
+  padding-left: 10px;
+}
+
+.line-number {
+  color: var(--text-muted);
+  min-width: 32px;
+  text-align: right;
+  padding-right: 12px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.code-line.active .line-number {
+  color: var(--accent-blue);
+}
+
+.line-content {
+  white-space: pre;
+  color: var(--text-primary);
+}
+
+/* Syntax highlighting */
+.syn-keyword { color: #ff7b72; }
+.syn-string { color: #a5d6ff; }
+.syn-number { color: #79c0ff; }
+.syn-comment { color: var(--text-muted); font-style: italic; }
+.syn-builtin { color: #ffa657; }
+.syn-ident { color: #e6edf3; }
+.syn-operator { color: #ff7b72; }

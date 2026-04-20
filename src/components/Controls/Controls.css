@@ -1,0 +1,148 @@
+.controls-bar {
+  height: var(--topbar-height);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  gap: 12px;
+  min-width: 0;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.control-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.play-btn {
+  background: var(--accent-green-dim);
+  border-color: var(--accent-green);
+  color: #fff;
+}
+
+.play-btn:hover:not(:disabled) {
+  background: var(--accent-green);
+}
+
+.pause-btn {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+  color: #fff;
+}
+
+.pause-btn:hover:not(:disabled) {
+  background: var(--accent-orange);
+}
+
+.reset-btn {
+  background: var(--accent-red-dim);
+  border-color: var(--accent-red);
+  color: #fff;
+}
+
+.reset-btn:hover:not(:disabled) {
+  background: var(--accent-red);
+}
+
+.generate-btn {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.generate-btn:hover:not(:disabled) {
+  background: var(--accent-blue-dim);
+  color: #fff;
+}
+
+.step-btn {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+}
+
+.step-btn:hover:not(:disabled) {
+  background: rgba(188, 140, 255, 0.15);
+}
+
+.controls-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.speed-slider {
+  width: 80px;
+}
+
+.speed-value {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--accent-blue);
+  min-width: 36px;
+  text-align: right;
+}
+
+.step-counter {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.step-current {
+  color: var(--accent-green);
+}
+
+.step-sep {
+  color: var(--text-muted);
+}
+
+.step-total {
+  color: var(--text-secondary);
+}
+
+.step-message {
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}

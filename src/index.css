@@ -1,0 +1,153 @@
+/* ============================================================
+   Global Styles — Dark Developer Theme
+   ============================================================ */
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-hover: #292e36;
+  --border: #30363d;
+  --border-active: #484f58;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+  --accent-green: #3fb950;
+  --accent-green-dim: #238636;
+  --accent-orange: #d29922;
+  --accent-orange-dim: #9e6a03;
+  --accent-red: #f85149;
+  --accent-red-dim: #da3633;
+  --accent-blue: #58a6ff;
+  --accent-blue-dim: #1f6feb;
+  --accent-purple: #bc8cff;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  --radius: 0px;
+  --sidebar-width: 220px;
+  --topbar-height: 44px;
+  --code-panel-height: 280px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 4px 12px;
+  font-size: 12px;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+button:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-active);
+}
+
+button:active {
+  background: var(--border);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent-green-dim);
+  border-color: var(--accent-green);
+  color: #fff;
+}
+
+button.primary:hover {
+  background: var(--accent-green);
+}
+
+button.danger {
+  background: var(--accent-red-dim);
+  border-color: var(--accent-red);
+  color: #fff;
+}
+
+button.danger:hover {
+  background: var(--accent-red);
+}
+
+input[type="text"],
+input[type="number"] {
+  font-family: var(--font-mono);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--accent-blue);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--bg-tertiary);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--accent-blue);
+  cursor: pointer;
+  border: 1px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}
+
+::selection {
+  background: var(--accent-blue-dim);
+  color: #fff;
+}

@@ -1,0 +1,121 @@
+.sorting-visualizer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sorting-input-row {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.sorting-custom-input {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 4px 8px;
+}
+
+.sorting-custom-input:focus {
+  border-color: var(--accent-blue);
+  outline: none;
+}
+
+.sorting-custom-input::placeholder {
+  color: var(--text-muted);
+}
+
+.viz-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.bars-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  padding: 16px 12px 8px;
+  overflow: hidden;
+}
+
+.bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 2px;
+}
+
+.bar {
+  width: 100%;
+  background: var(--accent-blue);
+  border: none;
+  transition: height 0.08s ease, background 0.08s ease;
+  min-height: 2px;
+}
+
+.bar-active {
+  background: var(--accent-orange);
+}
+
+.bar-pivot {
+  background: var(--accent-red);
+}
+
+.bar-sorted {
+  background: var(--accent-green);
+}
+
+.bar-range {
+  background: rgba(88, 166, 255, 0.4);
+}
+
+.bar-value {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.sorting-legend {
+  display: flex;
+  gap: 16px;
+  padding: 4px 12px 8px;
+  border-top: 1px solid var(--border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--border);
+}
+
+.swatch-active { background: var(--accent-orange); }
+.swatch-pivot { background: var(--accent-red); }
+.swatch-sorted { background: var(--accent-green); }
+.swatch-range { background: rgba(88, 166, 255, 0.4); }

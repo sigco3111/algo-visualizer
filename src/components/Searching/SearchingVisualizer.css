@@ -1,0 +1,143 @@
+.searching-visualizer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.viz-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* Grid area */
+.grid-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.grid-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.grid-tool-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.grid-tool-swatch {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--border);
+}
+
+.grid-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: auto;
+  font-style: italic;
+}
+
+.grid-canvas {
+  flex: 1;
+  cursor: crosshair;
+  image-rendering: pixelated;
+}
+
+/* Binary Search area */
+.binary-search-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow: auto;
+}
+
+.bs-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bs-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.bs-target-input {
+  width: 60px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--accent-orange);
+  padding: 2px 6px;
+  text-align: center;
+}
+
+.bs-array {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.bs-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  min-width: 36px;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.bs-cell.bs-range {
+  background: rgba(88, 166, 255, 0.15);
+  border-color: var(--accent-blue-dim);
+}
+
+.bs-cell.bs-visited {
+  background: var(--accent-blue-dim);
+  border-color: var(--accent-blue);
+}
+
+.bs-cell.bs-mid {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+}
+
+.bs-cell.bs-found {
+  background: var(--accent-green-dim);
+  border-color: var(--accent-green);
+}
+
+.bs-index {
+  font-size: 8px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.bs-value {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
